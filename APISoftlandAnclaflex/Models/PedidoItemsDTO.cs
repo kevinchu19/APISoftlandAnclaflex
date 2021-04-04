@@ -7,7 +7,6 @@ namespace APISoftlandAnclaflex.Models
 {
     public class PedidoItemsDTO
     {
-        public int Item { get; set; }
         public string IdProducto { get; set; }
         public decimal Cantidad { get; set; }
         public decimal Precio { get; set; }

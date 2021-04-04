@@ -9,7 +9,7 @@ namespace APISoftlandAnclaflex.OE.Interfaces
     public interface IOEObject
     {
 
-        public Save save()
+        public Save Save()
         {
             return new Save
             {
@@ -18,7 +18,7 @@ namespace APISoftlandAnclaflex.OE.Interfaces
             };
         }
 
-        public void AsignoaTM<T>(string table, string field, T value, int deepnessLevel)
+        public void AsignoaTM<T>(string table, T value, int deepnessLevel)
         {
 
         }
@@ -33,7 +33,7 @@ namespace APISoftlandAnclaflex.OE.Interfaces
         {
 
         }
-
+        
         public void LimpioGrilla(string table)
         {
 

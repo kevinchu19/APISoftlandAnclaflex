@@ -9,9 +9,9 @@ namespace APISoftlandAnclaflex.Helpers
     public class PedidoResponse : BaseResponse<PedidoDTO>
     {
 
-        public PedidoResponse(string titulo, int idOperacion) : base(titulo, idOperacion) { }
-        public PedidoResponse(string titulo, int idOperacion, PedidoDTO resource) : base(titulo, idOperacion, resource) { }
-        public PedidoResponse(string titulo, int idOperacion, string message) : base(titulo, idOperacion, message) { }
+        public PedidoResponse(string titulo) : base(titulo) { }
+        public PedidoResponse(string titulo, PedidoDTO resource) : base(titulo, resource) { }
+        public PedidoResponse(string titulo, string message) : base(titulo, message) { }
 
 
     }

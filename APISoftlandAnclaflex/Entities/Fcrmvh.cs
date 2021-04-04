@@ -173,5 +173,7 @@ namespace APISoftlandAnclaflex.Entities
         public string Sar_Fcrmvh_Nickml { get; set; }
         public string Sar_Fcrmvh_Tranum { get; set; }
         public string Sar_Fcrmvh_Traurl { get; set; }
+        public virtual int Virt_Nroffc { get; set; }
+        public virtual ICollection<Fcrmvi> Items{ get; set; }
     }
 }

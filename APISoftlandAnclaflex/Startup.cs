@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using APISoftlandAnclaflex.Entities;
+using APISoftlandAnclaflex.Helpers;
+using APISoftlandAnclaflex.MapperHelp;
 using APISoftlandAnclaflex.Models;
+using APISoftlandAnclaflex.OE;
+using APISoftlandAnclaflex.OE.Interfaces;
+using APISoftlandAnclaflex.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,9 +37,17 @@ namespace APISoftlandAnclaflex
         {
             services.AddControllers();
 
+            services.AddScoped<PedidoRepository>();
+
+            services.AddSingleton<Translate>();
+
+            services.AddTransient<IOEObject, FC_RR_FCRMVH>(provider =>
+                new FC_RR_FCRMVH("admin", Configuration["PasswordAdmin"], Configuration["CompanyName"], Configuration));
+
+
             services.AddMvc(Options =>
             {
-                Options.Filters.Add(typeof(FiltrodeExcepcion));
+                Options.Filters.Add(typeof(FiltroDeExcepcion));
             }).
                SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
@@ -46,7 +59,7 @@ namespace APISoftlandAnclaflex
             services.AddAutoMapper(configuration =>
             {
                 configuration.CreateMap<PedidoDTO, Fcrmvh>()
-                .ForMember(dest => dest.Fcrmvh_Nrofor, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Virt_Nroffc, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Fcrmvh_Nrocta, opt => opt.MapFrom(src => src.IdCliente))
                 .ForMember(dest => dest.Fcrmvh_Cdent1, opt => opt.MapFrom(src => src.IdEntrega))
                 .ForMember(dest => dest.Fcrmvh_Dirent, opt => opt.MapFrom(src => src.DireccionEntrega))
@@ -68,9 +81,15 @@ namespace APISoftlandAnclaflex
                 .ReverseMap();
 
                 configuration.CreateMap<PedidoItemsDTO, Fcrmvi>()
-                .ForMember(dest => dest.Fcrmvi_Tippro, opt => opt.MapFrom(src => src.IdProducto))
+                .ForMember(dest => dest.Fcrmvi_Tipori, opt => opt.MapFrom<TipoProductoResolver>())
+                .ForMember(dest => dest.Fcrmvi_Artori, opt => opt.MapFrom<CodigoProductoResolver>())
+                .ForMember(dest => dest.Fcrmvi_Cantid, opt => opt.MapFrom(src => src.Cantidad))
+                .ForMember(dest => dest.Fcrmvi_Precio, opt => opt.MapFrom(src => src.Precio))
+                .ForMember(dest => dest.Fcrmvi_Pctbf1, opt => opt.MapFrom(src => src.Bonificacion1))
+                .ForMember(dest => dest.Fcrmvi_Pctbf2, opt => opt.MapFrom(src => src.Bonificacion2))
+                .ForMember(dest => dest.Fcrmvi_Pctbf3, opt => opt.MapFrom(src => src.Bonificacion3))
                 .ReverseMap();
-            }
+        }
                 , typeof(Startup));
 
             services.AddSingleton<Serilog.ILogger>(options =>

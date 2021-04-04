@@ -24,7 +24,7 @@ namespace APISoftlandAnclaflex.Helpers
 
             var exception = context.Exception;
 
-            PedidoResponse response = new PedidoResponse("", 0, "") { };
+            PedidoResponse response = new PedidoResponse("", "") { };
 
 
             switch (context.Exception.GetType().ToString())

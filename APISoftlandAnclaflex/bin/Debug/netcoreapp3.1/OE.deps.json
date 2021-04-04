@@ -11,7 +11,7 @@
       "NETCOREAPP3_1"
     ],
     "languageVersion": "preview",
-    "platform": "",
+    "platform": "x86",
     "allowUnsafe": false,
     "warningsAsErrors": false,
     "optimize": false,
@@ -22,7 +22,7 @@
   },
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "APISoftlandAnclaflex/1.0.0": {
+      "OE/1.0.0": {
         "dependencies": {
           "AutoMapper": "10.1.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.1",
@@ -302,10 +302,10 @@
           "WindowsBase": "4.0.0.0"
         },
         "runtime": {
-          "APISoftlandAnclaflex.dll": {}
+          "OE.dll": {}
         },
         "compile": {
-          "APISoftlandAnclaflex.dll": {}
+          "OE.dll": {}
         }
       },
       "AutoMapper/10.1.1": {
@@ -3493,7 +3493,7 @@
     }
   },
   "libraries": {
-    "APISoftlandAnclaflex/1.0.0": {
+    "OE/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

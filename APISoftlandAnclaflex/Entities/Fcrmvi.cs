@@ -147,14 +147,13 @@ namespace APISoftlandAnclaflex.Entities
         public int? Usr_Fcrmvi_Bultos { get; set; }
         public int? Usr_Fcrmvi_Palets { get; set; }
         public string Usr_Fcrmvi_Codzon { get; set; }
-        public string Usr_Fcrmvi_Jurisd { get; set; }
         public DateTime? Fcrmvi_Fecalt { get; set; }
         public DateTime? Fcrmvi_Fecmod { get; set; }
         public string Fcrmvi_Userid { get; set; }
         public string Fcrmvi_Ultopr { get; set; }
         public string Fcrmvi_Debaja { get; set; }
         public string Fcrmvi_Oalias { get; set; }
-        public string Usr_Fcrmvi_Cdent1 { get; set; }
-        public decimal? Usr_Fcrmvi_Salsto { get; set; }
+
+        public virtual Fcrmvh Pedido { get; set; }
     }
 }

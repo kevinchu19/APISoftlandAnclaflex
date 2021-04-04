@@ -19,7 +19,7 @@ namespace APISoftlandAnclaflex.Entities
         {
         }
 
-        public virtual DbSet<Fcrmvh> Fcrmvh_ { get; set; }
+        public virtual DbSet<Fcrmvh> Fcrmvh { get; set; }
         public virtual DbSet<Fcrmvi> Fcrmvi { get; set; }
 
 
@@ -829,6 +829,10 @@ namespace APISoftlandAnclaflex.Entities
                     .HasColumnName("USR_FCRMVH_USRCOM")
                     .HasMaxLength(36)
                     .IsUnicode(false);
+
+                entity.HasMany(e => e.Items)
+                      .WithOne(c => c.Pedido)
+                      .HasForeignKey(d => new { d.Fcrmvi_Codemp, d.Fcrmvi_Modfor, d.Fcrmvi_Codfor, d.Fcrmvi_Nrofor });
             });
 
             modelBuilder.Entity<Fcrmvi>(entity =>
@@ -1484,11 +1488,6 @@ namespace APISoftlandAnclaflex.Entities
 
                 entity.Property(e => e.Usr_Fcrmvi_Bultos).HasColumnName("USR_FCRMVI_BULTOS");
 
-                entity.Property(e => e.Usr_Fcrmvi_Cdent1)
-                    .HasColumnName("USR_FCRMVI_CDENT1")
-                    .HasMaxLength(6)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.Usr_Fcrmvi_Cndpag)
                     .HasColumnName("USR_FCRMVI_CNDPAG")
                     .HasMaxLength(6)
@@ -1515,16 +1514,7 @@ namespace APISoftlandAnclaflex.Entities
                     .IsUnicode(false)
                     .IsFixedLength();
 
-                entity.Property(e => e.Usr_Fcrmvi_Jurisd)
-                    .HasColumnName("USR_FCRMVI_JURISD")
-                    .HasMaxLength(6)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.Usr_Fcrmvi_Palets).HasColumnName("USR_FCRMVI_PALETS");
-
-                entity.Property(e => e.Usr_Fcrmvi_Salsto)
-                    .HasColumnName("USR_FCRMVI_SALSTO")
-                    .HasColumnType("numeric(18, 4)");
 
                 entity.Property(e => e.Usr_Fcrmvi_Stdisp)
                     .HasColumnName("USR_FCRMVI_STDISP")
