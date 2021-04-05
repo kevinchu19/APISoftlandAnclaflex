@@ -1,15 +1,10 @@
-﻿using APISoftlandAnclaflex.Entities;
-using APISoftlandAnclaflex.Helpers;
-using APISoftlandAnclaflex.Models;
+﻿using APISoftlandAnclaflex.Models;
 using APISoftlandAnclaflex.OE.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace APISoftlandAnclaflex.OE
 {
@@ -20,7 +15,6 @@ namespace APISoftlandAnclaflex.OE
         private object oApplication { get; set; }
         private object oCompany { get; set; }
         private object oWizard { get; set; }
-
         private object oCurrentStep { get; set; }
         private object oTableWizard { get; set; }
         public object oFieldsWizard { get; private set; }
@@ -100,8 +94,7 @@ namespace APISoftlandAnclaflex.OE
                     camposAuditoria.Contains(propiedad.Name.Substring(propiedad.Name.Length - 6)) == false)
                 {
                     oField = OEType.InvokeMember("Fields", BindingFlags.GetProperty, null, oRow, new object[] { propiedad.Name });
-                    value = propiedad.GetValue(valor, null);
-                           
+                    value = propiedad.GetValue(valor, null);                     
                     resuelvoValor(oField, value);
                 }
             }
@@ -118,13 +111,18 @@ namespace APISoftlandAnclaflex.OE
         }
 
         public void CloseObjectInstance()
-        {
+        {       
             Marshal.ReleaseComObject(oField);
             Marshal.ReleaseComObject(oRow);
             Marshal.ReleaseComObject(oTable);
             Marshal.ReleaseComObject(oInstance);
-            Marshal.ReleaseComObject(oApplication);
-            Marshal.ReleaseComObject(oCompany);
+            Marshal.ReleaseComObject(oFieldWizard);
+            Marshal.ReleaseComObject(oFieldsWizard);
+            Marshal.ReleaseComObject(oTableWizard);
+            Marshal.ReleaseComObject(oCurrentStep);
+            Marshal.ReleaseComObject(oWizard);
+            //Marshal.ReleaseComObject(oApplication);
+            //Marshal.ReleaseComObject(oCompany);
             //OEType = null;
         }
 
@@ -167,9 +165,11 @@ namespace APISoftlandAnclaflex.OE
             if ((bool)OEType.InvokeMember("Readonly", BindingFlags.GetProperty, null, oField, null) == false)
             {
                 //try
-               // {
+                // {
+                    var a = OEType.InvokeMember("Name", BindingFlags.GetProperty, null, oField, null);
                     switch ((int)OEType.InvokeMember("DataType", BindingFlags.GetProperty, null, oField, null))
                     {
+                        
                         case 4: case 7: case 9: //Numero
                             if (value != null)
                             {
