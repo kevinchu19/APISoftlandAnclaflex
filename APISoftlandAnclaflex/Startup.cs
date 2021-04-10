@@ -37,6 +37,15 @@ namespace APISoftlandAnclaflex
         {
             services.AddControllers();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()//.WithOrigins("http://localhost:4200", "http://localhost:44349")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    );
+            });
+
             services.AddScoped<PedidoRepository>();
 
             services.AddSingleton<Translate>();
@@ -119,6 +128,8 @@ namespace APISoftlandAnclaflex
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
