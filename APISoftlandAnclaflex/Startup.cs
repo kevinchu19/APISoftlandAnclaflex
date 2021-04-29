@@ -9,6 +9,7 @@ using APISoftlandAnclaflex.Models;
 using APISoftlandAnclaflex.OE;
 using APISoftlandAnclaflex.OE.Interfaces;
 using APISoftlandAnclaflex.Repositories;
+using APISoftlandAnclaflex.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,6 +36,9 @@ namespace APISoftlandAnclaflex
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHostedService<ConsumeScopedServiceHostedService>();
+            services.AddScoped<IScopedProcessingService, PostearDatosEnPortalWebService>();
+
             services.AddControllers();
 
             services.AddCors(options =>
@@ -47,6 +51,17 @@ namespace APISoftlandAnclaflex
             });
 
             services.AddScoped<PedidoRepository>();
+
+            services.AddScoped<BonificacionesRepository>();
+            services.AddScoped<ClienteDireccionesDeEntregaRepository>();
+            services.AddScoped<ClientesRepository>();
+            services.AddScoped<ListasDePrecioRepository>();
+            services.AddScoped<ProductosRepository>();
+            services.AddScoped<ProvinciasRepository>();
+            services.AddScoped<TransportistasRedespachoRepository>();
+            services.AddScoped<UsuariosRepository>();
+            services.AddScoped<VendedoresRepository>();
+
 
             services.AddSingleton<Translate>();
 

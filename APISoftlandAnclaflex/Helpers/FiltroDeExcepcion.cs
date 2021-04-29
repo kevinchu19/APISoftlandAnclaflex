@@ -40,7 +40,7 @@ namespace APISoftlandAnclaflex.Helpers
                 default:
                     response.Estado = 500;
                     response.Titulo = "Error interno de la aplicación";
-                    response.Mensaje = exception.Message;
+                    response.Mensaje = exception.InnerException.Message==null?exception.Message: exception.InnerException.Message;
                     context.Result = new ObjectResult(response);
                     context.HttpContext.Response.StatusCode =
                               (int)HttpStatusCode.InternalServerError;

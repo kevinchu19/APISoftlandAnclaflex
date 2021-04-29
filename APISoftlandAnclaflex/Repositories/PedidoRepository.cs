@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace APISoftlandAnclaflex.Repositories
 {
-    public class PedidoRepository : RepositoryBase
+    public class PedidoRepository : RepositoryBase<string>
     {
         public IOEObject oFCRMVH { get; set; }
         public Translate Translate { get; }
