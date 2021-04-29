@@ -8,7 +8,7 @@ namespace APISoftlandAnclaflex.Models
     public class Listasdeprecio
     {
         public int RowID { get; set; }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Idproducto { get; set; }
         public DateTime Fecha { get; set; }
         public decimal? Precio { get; set; }
