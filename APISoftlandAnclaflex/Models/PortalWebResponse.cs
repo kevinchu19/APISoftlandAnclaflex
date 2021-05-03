@@ -10,6 +10,7 @@ namespace APISoftlandAnclaflex.Models
         public int Estado { get; set; }
         public string Titulo { get; set; }
         public string Mensaje { get; set; }
+        public string? Resource { get; set; }
 
     }
 }

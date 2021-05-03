@@ -112,6 +112,7 @@ namespace APISoftlandAnclaflex
                 .ForMember(dest => dest.Fcrmvi_Pctbf1, opt => opt.MapFrom(src => src.Bonificacion1))
                 .ForMember(dest => dest.Fcrmvi_Pctbf2, opt => opt.MapFrom(src => src.Bonificacion2))
                 .ForMember(dest => dest.Fcrmvi_Pctbf3, opt => opt.MapFrom(src => src.Bonificacion3))
+                .ForMember(dest => dest.Fcrmvi_Pctbf4, opt => opt.MapFrom(src => src.Bonificacion4))
                 .ReverseMap();
         }
                 , typeof(Startup));

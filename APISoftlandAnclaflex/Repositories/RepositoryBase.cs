@@ -79,9 +79,9 @@ namespace APISoftlandAnclaflex.Repositories
                     listaPropiedades[i].SetValue(respuesta, (string)reader["DeBaja"]=="S"?0:1);
                         break;
                     default:
-                        if (!reader.IsDBNull(i))
+                        if (reader[listaPropiedades[i].Name] != DBNull.Value)
                         {
-                            listaPropiedades[i].SetValue(respuesta, reader[i]);
+                            listaPropiedades[i].SetValue(respuesta, reader[listaPropiedades[i].Name]);
                         }
                         break;
                 }

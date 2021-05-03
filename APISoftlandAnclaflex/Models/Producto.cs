@@ -14,6 +14,7 @@ namespace APISoftlandAnclaflex.Models
         public string TipoProducto { get; set; }
         public string Rubro1 { get; set; }
         public string Rubro2 { get; set; }
+        public string ClienteExclusivo{ get; set; }
         public string Sfl_TableOperation { get; set; }
         public int Activo { get; set; }
 

@@ -71,19 +71,31 @@ namespace APISoftlandAnclaflex.Services
                 _logger.Information(
                     $"Scoped Processing Service is working. Count: {0}", executionCount);
 
-                await PostearRecurso<Provincia>(ProvinciasRepository, "GRTJUR", "Provincia");
-                await PostearRecurso<Transportistasredespacho>(TransportistasRedespachoRepository, "GRTTRA", "TransportistaRedespacho");
-                await PostearRecurso<Vendedores>(VendedoresRepository, "VTTVND", "Vendedor");
+                try
+                {
+                    await PostearRecurso<Provincia>(ProvinciasRepository, "GRTJUR", "Provincia");
+                    await PostearRecurso<Transportistasredespacho>(TransportistasRedespachoRepository, "GRTTRA", "TransportistaRedespacho");
+                    await PostearRecurso<Vendedores>(VendedoresRepository, "VTTVND", "Vendedor");
 
-                await PostearRecurso<Producto>(ProductosRepository, "STMPDH", "Producto");
-                await PostearRecurso<Listasdeprecio>(ListasDePrecioRepository, "STTPRE", "ListasDePrecio");
+                    await PostearRecurso<Producto>(ProductosRepository, "STMPDH", "Producto");
+                    await PostearRecurso<Listasdeprecio>(ListasDePrecioRepository, "STTPRE", "ListasDePrecio");
+
+                    await PostearRecurso<Cliente>(ClientesRepository, "VTMCLH", "Cliente");
+                    await PostearRecurso<Clientesdireccionesentrega>(ClientesDireccionesEntregaRepository, "VTTENT", "ClienteDireccionesEntrega");
+
+                    await PostearRecurso<Usuario>(UsuariosRepository, "USR_PWTUSH", "Usuario");
+                    await PostearRecurso<Bonificacion>(BonificacionesRepository, "FCTBGI", "Bonificacion");
+
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException != null)
+                    {
+                        _logger.Fatal($"Error al ejecutar servicios: {ex.InnerException.Message}");
+                    }
+                    _logger.Fatal($"Error al ejecutar servicios: {ex.Message}");
+                }
                 
-                await PostearRecurso<Cliente>(ClientesRepository, "VTMCLH", "Cliente");
-                await PostearRecurso<Clientesdireccionesentrega>(ClientesDireccionesEntregaRepository, "VTTENT", "ClienteDireccionesEntrega");
-
-                await PostearRecurso<Usuario>(UsuariosRepository, "USR_PWTUSH", "Usuario");
-                await PostearRecurso<Bonificacion>(BonificacionesRepository, "FCTBGI", "Bonificacion");
-
                 await Task.Delay(10000, stoppingToken);
             }
         }
@@ -101,10 +113,10 @@ namespace APISoftlandAnclaflex.Services
             {
                 int rowId = (int)propiedadRowId.GetValue(item);
                 string tipoOperacion = (string)propiedadTipoOperacion.GetValue(item);
-                string Id = (string)propiedadId.GetValue(item);
+                string Id = (string)propiedadId.GetValue(item).ToString();
 
                 string stringRequest = JsonSerializer.Serialize(item, new JsonSerializerOptions { WriteIndented = true });
-                _logger.Information($"Se envia recurso { stringRequest }");
+                _logger.Information($"Se envia recurso para {tipoOperacion}:{ stringRequest }");
                 HttpResponseMessage stringTask = new HttpResponseMessage();
                 object stream = new object();
                 switch (tipoOperacion)
@@ -114,8 +126,28 @@ namespace APISoftlandAnclaflex.Services
                         stream = await stringTask.Content.ReadAsStreamAsync();
                         break;
                     case "UPDATE":
-                        stringTask = await client.PutAsync($"{_configuration["HostPortalWeb:BasePath"]}/{resourcePath}/{Id}", new StringContent(stringRequest, Encoding.UTF8, "application/json"));
-                        stream = await stringTask.Content.ReadAsStreamAsync();
+                        switch (resourcePath)
+                        {
+                            case "ClienteDireccionesEntrega":
+                                System.Reflection.PropertyInfo propiedadIdCliente = type.GetProperty("IdCliente");
+                                string idCliente = (string)propiedadIdCliente.GetValue(item);
+                                stringTask = await client.PutAsync($"{_configuration["HostPortalWeb:BasePath"]}/{resourcePath}/{idCliente}/{Id}", new StringContent(stringRequest, Encoding.UTF8, "application/json"));
+                                stream = await stringTask.Content.ReadAsStreamAsync();
+                                break;
+                            case "ListasDePrecio":
+                                System.Reflection.PropertyInfo propiedadIdProducto = type.GetProperty("IdProducto");
+                                System.Reflection.PropertyInfo propiedadFecha = type.GetProperty("Fecha");
+                                string idProducto = (string)propiedadIdProducto.GetValue(item);
+                                DateTime fecha = (DateTime)propiedadFecha.GetValue(item);
+                                stringTask = await client.PutAsync($"{_configuration["HostPortalWeb:BasePath"]}/{resourcePath}/{Id}/{idProducto}/{fecha}", new StringContent(stringRequest, Encoding.UTF8, "application/json"));
+                                stream = await stringTask.Content.ReadAsStreamAsync();
+                                break;
+                            default:
+                                stringTask = await client.PutAsync($"{_configuration["HostPortalWeb:BasePath"]}/{resourcePath}/{Id}", new StringContent(stringRequest, Encoding.UTF8, "application/json"));
+                                stream = await stringTask.Content.ReadAsStreamAsync();
+                                break;
+                        }
+                        
                         break;
                     case "DELETE":
                         System.Reflection.PropertyInfo propiedadActivo = type.GetProperty("Activo");
@@ -132,9 +164,10 @@ namespace APISoftlandAnclaflex.Services
 
                 if (stringTask.IsSuccessStatusCode)
                 {
+                    var content = await JsonSerializer.DeserializeAsync<PortalWebResponse>((Stream)stream);
+
                     try
                     {
-                        
                         await repository.ActualizaRecursoTransferido(rowId,"S",objeto);
                         _logger.Information("Recurso generado con exito");
                     }
