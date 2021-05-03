@@ -18,7 +18,7 @@ namespace APISoftlandAnclaflex.Services
 {
     internal interface IScopedProcessingService
     {
-        Task DoWork(CancellationToken stoppingToken);
+        Task DoWork();
     }
 
     internal class PostearDatosEnPortalWebService : IScopedProcessingService
@@ -63,41 +63,37 @@ namespace APISoftlandAnclaflex.Services
             VendedoresRepository = _vendedoresRepository;
         }
 
-        public async Task DoWork(CancellationToken stoppingToken)
+        public async Task DoWork()
         {
-            while (!stoppingToken.IsCancellationRequested)
+            executionCount++;
+            _logger.Information(
+                $"Scoped Processing Service is working. Count: {0}", executionCount);
+
+            try
             {
-                executionCount++;
-                _logger.Information(
-                    $"Scoped Processing Service is working. Count: {0}", executionCount);
+                await PostearRecurso<Provincia>(ProvinciasRepository, "GRTJUR", "Provincia");
+                await PostearRecurso<Transportistasredespacho>(TransportistasRedespachoRepository, "GRTTRA", "TransportistaRedespacho");
+                await PostearRecurso<Vendedores>(VendedoresRepository, "VTTVND", "Vendedor");
 
-                try
-                {
-                    await PostearRecurso<Provincia>(ProvinciasRepository, "GRTJUR", "Provincia");
-                    await PostearRecurso<Transportistasredespacho>(TransportistasRedespachoRepository, "GRTTRA", "TransportistaRedespacho");
-                    await PostearRecurso<Vendedores>(VendedoresRepository, "VTTVND", "Vendedor");
+                await PostearRecurso<Producto>(ProductosRepository, "STMPDH", "Producto");
+                await PostearRecurso<Listasdeprecio>(ListasDePrecioRepository, "STTPRE", "ListasDePrecio");
 
-                    await PostearRecurso<Producto>(ProductosRepository, "STMPDH", "Producto");
-                    await PostearRecurso<Listasdeprecio>(ListasDePrecioRepository, "STTPRE", "ListasDePrecio");
+                await PostearRecurso<Cliente>(ClientesRepository, "VTMCLH", "Cliente");
+                await PostearRecurso<Clientesdireccionesentrega>(ClientesDireccionesEntregaRepository, "VTTENT", "ClienteDireccionesEntrega");
 
-                    await PostearRecurso<Cliente>(ClientesRepository, "VTMCLH", "Cliente");
-                    await PostearRecurso<Clientesdireccionesentrega>(ClientesDireccionesEntregaRepository, "VTTENT", "ClienteDireccionesEntrega");
+                await PostearRecurso<Usuario>(UsuariosRepository, "USR_PWTUSH", "Usuario");
+                await PostearRecurso<Bonificacion>(BonificacionesRepository, "FCTBGI", "Bonificacion");
 
-                    await PostearRecurso<Usuario>(UsuariosRepository, "USR_PWTUSH", "Usuario");
-                    await PostearRecurso<Bonificacion>(BonificacionesRepository, "FCTBGI", "Bonificacion");
-
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null)
-                    {
-                        _logger.Fatal($"Error al ejecutar servicios: {ex.InnerException.Message}");
-                    }
-                    _logger.Fatal($"Error al ejecutar servicios: {ex.Message}");
-                }
-                
-                await Task.Delay(10000, stoppingToken);
             }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    _logger.Fatal($"Error al ejecutar servicios: {ex.InnerException.Message}");
+                }
+                _logger.Fatal($"Error al ejecutar servicios: {ex.Message}");
+            }
+                            
         }
 
         private async Task PostearRecurso<T>(IRepository<T> repository, string objeto, string resourcePath)
