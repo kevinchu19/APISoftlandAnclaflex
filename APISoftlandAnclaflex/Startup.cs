@@ -65,8 +65,8 @@ namespace APISoftlandAnclaflex
 
             services.AddSingleton<Translate>();
 
-            services.AddTransient<IOEObject, FC_RR_FCRMVH>(provider =>
-                new FC_RR_FCRMVH("admin", Configuration["PasswordAdmin"], Configuration["CompanyName"], Configuration));
+            //services.AddTransient<IOEObject, FC_RR_FCRMVH>(provider =>
+            //    new FC_RR_FCRMVH("admin", Configuration["PasswordAdmin"], Configuration["CompanyName"], Configuration));
 
 
             services.AddMvc(Options =>
@@ -98,7 +98,11 @@ namespace APISoftlandAnclaflex
                 .ForMember(dest => dest.Fcrmvh_Telefn, opt => opt.MapFrom(src => src.Telefono))
                 .ForMember(dest => dest.Usr_Fcrmvh_Direml, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Fcrmvh_Fchmov, opt => opt.MapFrom(src => src.Fecha))
-                .ForMember(dest => dest.Usr_Fcrmvh_Retira, opt => opt.MapFrom(src => src.RetiradeFabrica))
+                .ForMember(dest => dest.Usr_Fcrmvh_Retira, opt => opt.MapFrom(src => src.RetiradeFabrica==1?"S":"N"))
+                .ForMember(dest => dest.Usr_Fcrmvh_Acopio, opt => opt.MapFrom(src => src.Acopio == 1 ? "S" : "N"))
+                .ForMember(dest => dest.Usr_Fcrmvh_Dirmod, opt => opt.MapFrom(src => src.DireccionModificada == 1 ? "S" : "N"))
+                .ForMember(dest => dest.Fcrmvh_Fchdes, opt => opt.MapFrom(src => src.FechaDeEntrega))
+                .ForMember(dest => dest.Fcrmvh_Fchhas, opt => opt.MapFrom(src => src.FechaDeEntrega))
                 //.ForMember(dest => dest.Usr_Fcrmvh_, opt => opt.MapFrom(src => src.EsBarrioCerrado))
                 //.ForMember(dest => dest.Fcrmvh_Nrofor, opt => opt.MapFrom(src => src.FechaDeEntrega))
                 //.ForMember(dest => dest.Fcrmvh_Nrofor, opt => opt.MapFrom(src => src.PagoEnEfectivo))

@@ -42,7 +42,7 @@ namespace APISoftlandAnclaflex.Controllers
             {
                 _logger.Information($"Procesando pedido {pedido.Id}");
 
-                PedidoResponse result = _repository.PostPedido(_mapper.Map<PedidoDTO, Fcrmvh>(pedido), "RUN_FOR_SCRIPT");
+                PedidoResponse result = _repository.PostPedido(_mapper.Map<PedidoDTO, Fcrmvh>(pedido), "RUN_FOR_SCRIPT", pedido.PagoEnEfectivo==1?true:false);
                 if (result.Estado == 200)
                 {
                     _logger.Information($"Pedido {pedido.Id} generado exitosamente");

@@ -16,15 +16,18 @@ namespace APISoftlandAnclaflex.Repositories
         public IOEObject oFCRMVH { get; set; }
         public Translate Translate { get; }
 
-        public PedidoRepository(ANCLAFContext context, Serilog.ILogger logger, IConfiguration configuration, IOEObject oInstanceFCRMVH, Translate translate) :
+        public PedidoRepository(ANCLAFContext context, Serilog.ILogger logger, IConfiguration configuration,Translate translate) :
             base(context, configuration, logger)
         {
-            oFCRMVH = oInstanceFCRMVH;
             Translate = translate;
         }
 
-        public PedidoResponse PostPedido(Fcrmvh _pedido, string _tipoOperacion)
+        public PedidoResponse PostPedido(Fcrmvh _pedido, string _tipoOperacion, bool pagoEfectivo)
         {
+            string companyName = pagoEfectivo ? Configuration["CompanyNameEfectivo"] : Configuration["CompanyName"];
+            
+            FC_RR_FCRMVH oFCRMVH = new FC_RR_FCRMVH("admin", Configuration["PasswordAdmin"],companyName, Configuration);
+
             oFCRMVH.InstancioObjeto(_tipoOperacion);
 
             Type typePedido = _pedido.GetType();
