@@ -24,8 +24,8 @@ namespace APISoftlandAnclaflex.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.Information(
-                "Consume Scoped Service Hosted Service running.");
+            //_logger.Information(
+            //    "Consume Scoped Service Hosted Service running.");
             try
             {
                 _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
@@ -40,8 +40,8 @@ namespace APISoftlandAnclaflex.Services
 
         private async void DoWork(object state)
         {
-            _logger.Information(
-                "Consume Scoped Service Hosted Service is working.");
+            //_logger.Information(
+            //    "Consume Scoped Service Hosted Service is working.");
 
             using (var scope = Services.CreateScope())
             {

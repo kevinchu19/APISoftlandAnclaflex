@@ -11,10 +11,10 @@
       "NETCOREAPP3_1"
     ],
     "languageVersion": "preview",
-    "platform": "",
+    "platform": "x86",
     "allowUnsafe": false,
     "warningsAsErrors": false,
-    "optimize": true,
+    "optimize": false,
     "keyFile": "",
     "emitEntryPoint": true,
     "xmlDoc": false,

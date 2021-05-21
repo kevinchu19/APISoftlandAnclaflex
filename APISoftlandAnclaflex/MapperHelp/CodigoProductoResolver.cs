@@ -12,7 +12,7 @@ namespace APISoftlandAnclaflex.MapperHelp
 	{
 		public string Resolve(PedidoItemsDTO source, Fcrmvi destination, string member, ResolutionContext context)
 		{
-			return source.IdProducto.Split("|")[1].Trim();
+			return source.IdProducto.Split("|")[1];
 		}
 	}
 }
