@@ -1,4 +1,5 @@
-﻿using APISoftlandAnclaflex.Models;
+﻿using APISoftlandAnclaflex.Helpers;
+using APISoftlandAnclaflex.Models;
 using APISoftlandAnclaflex.OE.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -25,7 +26,9 @@ namespace APISoftlandAnclaflex.OE
         private object oFieldWizard { get; set; }
         public IConfiguration _configuration { get; }
 
-        public FC_RR_FCRMVH(string user, string password, string companyName, IConfiguration configuration) //NO AGREGAR DEPENDENCIAS A OTROS SERVICIOS
+        private Serilog.ILogger _logger { get; set; }
+        public FC_RR_FCRMVH(string user, string password, string companyName, IConfiguration configuration,
+                            Serilog.ILogger logger) //NO AGREGAR DEPENDENCIAS A OTROS SERVICIOS
         {
             OEType = Type.GetTypeFromProgID("cwlwoe.global");
             OEInst = Activator.CreateInstance(OEType);
@@ -35,6 +38,7 @@ namespace APISoftlandAnclaflex.OE
             oApplication = OEType.InvokeMember("GetApplication", BindingFlags.InvokeMethod, null, OEInst, userPassword);
             oCompany = OEType.InvokeMember("Companies", BindingFlags.GetProperty, null, oApplication, company);
             _configuration = configuration;
+            _logger = logger;
         }
 
         public void InstancioObjeto(string tipoOperacion)
@@ -129,6 +133,12 @@ namespace APISoftlandAnclaflex.OE
         public Save Save()
         {
             string[] sErrorMessage = new string[] { null };
+
+            oTable = OEType.InvokeMember("Table", BindingFlags.GetProperty, null, oInstance, null);
+            oRow = OEType.InvokeMember("Rows", BindingFlags.GetProperty, null, oTable, new object[] { 1 });
+            dynamic oTableAsientoContable = OEType.InvokeMember("Tables", BindingFlags.GetProperty, null, oRow, new object[] { "FCRMVI07" });
+            OEType.InvokeMember("Activate", BindingFlags.InvokeMethod, null, oTableAsientoContable, null);
+
             object result = OEType.InvokeMember("Save", BindingFlags.InvokeMethod, null, oInstance, sErrorMessage);
 
             if ((bool)result == false && sErrorMessage[0] == null)
@@ -164,16 +174,21 @@ namespace APISoftlandAnclaflex.OE
         {
             if ((bool)OEType.InvokeMember("Readonly", BindingFlags.GetProperty, null, oField, null) == false)
             {
-                //try
-                // {
-                    var a = OEType.InvokeMember("Name", BindingFlags.GetProperty, null, oField, null);
+                try
+                {
+
                     switch ((int)OEType.InvokeMember("DataType", BindingFlags.GetProperty, null, oField, null))
                     {
                         
                         case 4: case 7: case 9: //Numero
                             if (value != null)
                             {
+                                OEType.InvokeMember("Validating", BindingFlags.SetProperty, null, oInstance, new object[] { true });
                                 OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oField, new object[] { value });
+                                if (_configuration["FieldLog"] == "S")
+                                {
+                                    _logger.Information($"Campo {OEType.InvokeMember("Name", BindingFlags.GetProperty, null, oField, null)}: {value}");
+                                }
                             }
 
                             break;
@@ -183,24 +198,36 @@ namespace APISoftlandAnclaflex.OE
                             {
                             DateTime dateValue = (DateTime)value;
                                 value = dateValue.ToString("yyyyMMdd");
+                                OEType.InvokeMember("Validating", BindingFlags.SetProperty, null, oInstance, new object[] { true });
                                 OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oField, new object[] { value });
+                                if (_configuration["FieldLog"] == "S")
+                                {
+                                    _logger.Information($"Campo {OEType.InvokeMember("Name", BindingFlags.GetProperty, null, oField, null)}: {value}");
+                                }
                             }
                             break;
                         default: //string
                             if ((string)value != "null" && (string)value != "NULL" && value != null)
                             {
+                                OEType.InvokeMember("Validating", BindingFlags.SetProperty, null, oInstance, new object[] { true });
                                 OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oField, new object[] { value });
+                                if (_configuration["FieldLog"] == "S")
+                                {
+                                    _logger.Information($"Campo {OEType.InvokeMember("Name", BindingFlags.GetProperty, null, oField, null)}: {value}");
+                                }
                             }
                             break;
                     }
-                //}
+                    
+                }
 
-                //catch (Exception e)
-                //{
-                //    throw new BadRequestException($"Error al completar el campo {OEType.InvokeMember("Name", BindingFlags.GetProperty, null, oField, null)} con el valor {value}: {e.Message}");
-                //}
+                catch (Exception e)
+                {
+                    throw new BadRequestException($"Error al completar el campo {OEType.InvokeMember("Name", BindingFlags.GetProperty, null, oField, null)} con el valor {value}: {e.Message}");
+                }
 
             };
         }
     }
+
 }

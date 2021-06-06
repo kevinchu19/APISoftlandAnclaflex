@@ -17,6 +17,7 @@ namespace APISoftlandAnclaflex.Models
         public string ClienteExclusivo{ get; set; }
         public string Sfl_TableOperation { get; set; }
         public int Activo { get; set; }
+        public string Visibilidad { get; set; }
 
     }
 }

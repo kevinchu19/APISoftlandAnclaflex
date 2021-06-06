@@ -66,8 +66,8 @@ namespace APISoftlandAnclaflex.Services
         public async Task DoWork()
         {
             executionCount++;
-            _logger.Information(
-                $"Scoped Processing Service is working. Count: {0}", executionCount);
+            //_logger.Information(
+            //    $"Scoped Processing Service is working. Count: {0}", executionCount);
 
             try
             {
@@ -131,11 +131,12 @@ namespace APISoftlandAnclaflex.Services
                                 stream = await stringTask.Content.ReadAsStreamAsync();
                                 break;
                             case "ListasDePrecio":
-                                System.Reflection.PropertyInfo propiedadIdProducto = type.GetProperty("IdProducto");
+                                System.Reflection.PropertyInfo propiedadIdProducto = type.GetProperty("Idproducto");
                                 System.Reflection.PropertyInfo propiedadFecha = type.GetProperty("Fecha");
                                 string idProducto = (string)propiedadIdProducto.GetValue(item);
                                 DateTime fecha = (DateTime)propiedadFecha.GetValue(item);
-                                stringTask = await client.PutAsync($"{_configuration["HostPortalWeb:BasePath"]}/{resourcePath}/{Id}/{idProducto}/{fecha}", new StringContent(stringRequest, Encoding.UTF8, "application/json"));
+                                string fechaParam = fecha.ToString("yyyy-MM-dd");
+                                stringTask = await client.PutAsync($"{_configuration["HostPortalWeb:BasePath"]}/{resourcePath}/{Id}/{idProducto}/{fechaParam}", new StringContent(stringRequest, Encoding.UTF8, "application/json"));
                                 stream = await stringTask.Content.ReadAsStreamAsync();
                                 break;
                             default:

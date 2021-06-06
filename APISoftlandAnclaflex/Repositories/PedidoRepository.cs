@@ -26,7 +26,7 @@ namespace APISoftlandAnclaflex.Repositories
         {
             string companyName = pagoEfectivo ? Configuration["CompanyNameEfectivo"] : Configuration["CompanyName"];
             
-            FC_RR_FCRMVH oFCRMVH = new FC_RR_FCRMVH("admin", Configuration["PasswordAdmin"],companyName, Configuration);
+            FC_RR_FCRMVH oFCRMVH = new FC_RR_FCRMVH("admin", Configuration["PasswordAdmin"],companyName, Configuration, Logger);
 
             oFCRMVH.InstancioObjeto(_tipoOperacion);
 

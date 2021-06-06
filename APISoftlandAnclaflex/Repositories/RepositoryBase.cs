@@ -71,7 +71,7 @@ namespace APISoftlandAnclaflex.Repositories
             Type typeResponse = typeof(TResponse);
             System.Reflection.PropertyInfo[] listaPropiedades = typeResponse.GetProperties();
 
-            for (int i = 0; i < reader.FieldCount-1; i++)
+            for (int i = 0; i < listaPropiedades.Length; i++)
             {    
                 switch (listaPropiedades[i].Name )
                 {
