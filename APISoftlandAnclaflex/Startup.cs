@@ -103,6 +103,7 @@ namespace APISoftlandAnclaflex
                 .ForMember(dest => dest.Usr_Fcrmvh_Dirmod, opt => opt.MapFrom(src => src.DireccionModificada == 1 ? "S" : "N"))
                 .ForMember(dest => dest.Fcrmvh_Fchdes, opt => opt.MapFrom(src => src.FechaDeEntrega))
                 .ForMember(dest => dest.Fcrmvh_Fchhas, opt => opt.MapFrom(src => src.FechaDeEntrega))
+                .ForMember(dest => dest.Usr_Fcrmvh_Userpw, opt => opt.MapFrom(src => src.IdUsuario))
                 //.ForMember(dest => dest.Usr_Fcrmvh_, opt => opt.MapFrom(src => src.EsBarrioCerrado))
                 //.ForMember(dest => dest.Fcrmvh_Nrofor, opt => opt.MapFrom(src => src.FechaDeEntrega))
                 //.ForMember(dest => dest.Fcrmvh_Nrofor, opt => opt.MapFrom(src => src.PagoEnEfectivo))

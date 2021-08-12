@@ -60,6 +60,7 @@ namespace APISoftlandAnclaflex.Entities
         public string Usr_Fcrmvh_Obscom { get; set; }
         public string Usr_Fcrmvh_Direml { get; set; }
         public string Usr_Fcrmvh_Dirmod { get; set; }
+        public string Usr_Fcrmvh_Userpw { get; set; }
         public virtual int Virt_Nroffc { get; set; }
         public virtual ICollection<Fcrmvi> Items{ get; set; }
     }

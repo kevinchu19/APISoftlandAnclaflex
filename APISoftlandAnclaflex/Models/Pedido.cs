@@ -36,6 +36,8 @@ namespace APISoftlandAnclaflex.Models
         public Int16 PagoEnEfectivo { get; set; }
         public Int16 Transferido { get; set; }
 
+        public string IdUsuario { get; set; }
+
         public virtual Cliente Cliente { get; set; }
         public virtual Clientesdireccionesentrega IdEntregaNavigation { get; set; }
 
