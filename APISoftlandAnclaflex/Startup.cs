@@ -10,6 +10,7 @@ using APISoftlandAnclaflex.OE;
 using APISoftlandAnclaflex.OE.Interfaces;
 using APISoftlandAnclaflex.Repositories;
 using APISoftlandAnclaflex.Services;
+using APISoftlandAnclaflex.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,6 +39,10 @@ namespace APISoftlandAnclaflex
         {
             services.AddHostedService<ConsumeScopedServiceHostedService>();
             services.AddScoped<IScopedProcessingService, PostearDatosEnPortalWebService>();
+
+            //services.AddScoped<IImageHasher, ImageHasherService>();
+
+            services.AddDataProtection();
 
             services.AddControllers();
 
