@@ -10,5 +10,6 @@ namespace APISoftlandAnclaflex.Repositories.Interfaces
     {
         Task<ICollection<TResponse>> GetForPortalWeb(string objeto);
         Task ActualizaRecursoTransferido(int id, string transferido, string objeto);
+        Task ActualizaComprobanteTransferido(TResponse comprobante, string transferido, string objeto);
     }
 }

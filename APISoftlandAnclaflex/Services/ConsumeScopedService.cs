@@ -28,7 +28,7 @@ namespace APISoftlandAnclaflex.Services
             //    "Consume Scoped Service Hosted Service running.");
             try
             {
-                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
             }
             catch (Exception ex)
             {

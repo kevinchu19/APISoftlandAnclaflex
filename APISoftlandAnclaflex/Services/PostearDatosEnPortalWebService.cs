@@ -2,6 +2,7 @@
 using APISoftlandAnclaflex.Repositories;
 using APISoftlandAnclaflex.Repositories.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
@@ -38,7 +39,10 @@ namespace APISoftlandAnclaflex.Services
         public UsuariosRepository UsuariosRepository { get; }
         public VendedoresRepository VendedoresRepository { get; }
 
-        public PostearDatosEnPortalWebService(Serilog.ILogger logger,IMapper mapper, IConfiguration configuration,
+        public CuentaCorrienteRepository CuentaCorrienteRepository { get; }
+        public IDataProtector _dataProtector { get;  }
+
+        public PostearDatosEnPortalWebService(Serilog.ILogger logger,IMapper mapper, IConfiguration configuration, IDataProtectionProvider dataprovider,
                                               BonificacionesRepository _bonificacionesRepository,
                                               ClientesRepository _clientesRepository,
                                               ClienteDireccionesDeEntregaRepository _clientesDireccionesEntregaRepository,
@@ -47,7 +51,8 @@ namespace APISoftlandAnclaflex.Services
                                               ProvinciasRepository _provinciasRepository,
                                               TransportistasRedespachoRepository _transportistasRedespachoRepository,
                                               UsuariosRepository _usuariosRepository,
-                                              VendedoresRepository _vendedoresRepository)
+                                              VendedoresRepository _vendedoresRepository,
+                                              CuentaCorrienteRepository _cuentaCorrienteRepository)
         {
             _logger = logger;
             _mapper = mapper;
@@ -61,6 +66,8 @@ namespace APISoftlandAnclaflex.Services
             TransportistasRedespachoRepository = _transportistasRedespachoRepository;
             UsuariosRepository = _usuariosRepository;
             VendedoresRepository = _vendedoresRepository;
+            CuentaCorrienteRepository = _cuentaCorrienteRepository;
+            _dataProtector = dataprovider.CreateProtector("K:2879rojo");
         }
 
         public async Task DoWork()
@@ -84,6 +91,8 @@ namespace APISoftlandAnclaflex.Services
                 await PostearRecurso<Usuario>(UsuariosRepository, "USR_PWTUSH", "Usuario");
                 await PostearRecurso<Bonificacion>(BonificacionesRepository, "FCTBGI", "Bonificacion");
 
+                await PostearRecurso<CuentaCorriente>(CuentaCorrienteRepository, "VTRMVC", "CuentaCorriente");
+
             }
             catch (Exception ex)
             {
@@ -99,17 +108,24 @@ namespace APISoftlandAnclaflex.Services
         private async Task PostearRecurso<T>(IRepository<T> repository, string objeto, string resourcePath)
         {
             IEnumerable<T> data = await repository.GetForPortalWeb(objeto);
-            
+
             Type type = typeof(T);
             System.Reflection.PropertyInfo propiedadRowId = type.GetProperty("RowID");
             System.Reflection.PropertyInfo propiedadTipoOperacion = type.GetProperty("Sfl_TableOperation");
             System.Reflection.PropertyInfo propiedadId = type.GetProperty("Id");
-
+            System.Reflection.PropertyInfo pdfPathCuentaCorriente = type.GetProperty("PdfPath");
+            
+         
             foreach (T item in data)
             {
                 int rowId = (int)propiedadRowId.GetValue(item);
                 string tipoOperacion = (string)propiedadTipoOperacion.GetValue(item);
                 string Id = (string)propiedadId.GetValue(item).ToString();
+                if (pdfPathCuentaCorriente!=null)
+                {
+                    pdfPathCuentaCorriente.SetValue(item, _dataProtector.Protect((string)pdfPathCuentaCorriente.GetValue(item)));
+                }
+
 
                 string stringRequest = JsonSerializer.Serialize(item, new JsonSerializerOptions { WriteIndented = true });
                 _logger.Information($"Se envia recurso para {tipoOperacion}:{ stringRequest }");
@@ -165,7 +181,16 @@ namespace APISoftlandAnclaflex.Services
 
                     try
                     {
-                        await repository.ActualizaRecursoTransferido(rowId,"S",objeto);
+                        switch (resourcePath)
+                        {
+                            case "CuentaCorriente":
+                                await repository.ActualizaComprobanteTransferido(item, "S", objeto);
+                                break;
+                            default:
+                                await repository.ActualizaRecursoTransferido(rowId, "S", objeto);
+                                break;
+                        }
+                        
                         _logger.Information("Recurso generado con exito");
                     }
                     catch (Exception ex)
@@ -179,7 +204,15 @@ namespace APISoftlandAnclaflex.Services
                     try
                     {
 
-                        await repository.ActualizaRecursoTransferido(rowId, "E", objeto);
+                        switch (resourcePath)
+                        {
+                            case "CuentaCorriente":
+                                await repository.ActualizaComprobanteTransferido(item, "E", objeto);
+                                break;
+                            default:
+                                await repository.ActualizaRecursoTransferido(rowId, "E", objeto);
+                                break;
+                        }
                     }
                     catch (Exception ex)
                     {

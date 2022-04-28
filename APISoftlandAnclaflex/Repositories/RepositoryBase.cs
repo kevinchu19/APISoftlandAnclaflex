@@ -90,7 +90,10 @@ namespace APISoftlandAnclaflex.Repositories
             return (TResponse)respuesta;
         }
 
-        
+        public virtual Task ActualizaComprobanteTransferido(TResponse comprobante, string transferido, string objeto)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
