@@ -20,29 +20,28 @@ namespace APISoftlandAnclaflex.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CuentaCorrienteController : ControllerBase
+    public class ListadePreciosVigenteController : ControllerBase
     {
-        public PedidoRepository _repository { get; }
-        public IMapper _mapper { get; }
-        public IDataProtector _dataProtector { get; }
         public IConfiguration _configuration { get; }
 
         private readonly Serilog.ILogger _logger;
 
-        public CuentaCorrienteController(Serilog.ILogger logger, IDataProtectionProvider dataprovider, IConfiguration configuration)
+        public ListadePreciosVigenteController(Serilog.ILogger logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
-            _dataProtector = dataprovider.CreateProtector("K:2879rojo");
-            
+          
         }
 
-        [HttpGet("file/{imageUrl}")]
-        public async Task<IActionResult> Get(string imageUrl)
+        [HttpGet("file")]
+        public async Task<IActionResult> Get()
         {
-             var imageUrlDecoded = this._dataProtector.Unprotect((string)imageUrl);
-            var stream = new FileStream($"{_configuration["PdfCuentaCorrientePath"]}\\{imageUrlDecoded}", FileMode.Open);
-            return File(stream, "application/pdf", imageUrlDecoded);
+            var directory = new DirectoryInfo($"{_configuration["PdfListadePreciosPath"]}");
+            var myFile = directory.GetFiles()
+             .OrderByDescending(f => f.LastWriteTime)
+             .First();
+            var stream = new FileStream(myFile.FullName, FileMode.Open);
+            return File(stream, "application/pdf", myFile.Name);
         }
 
 
