@@ -21,7 +21,7 @@ namespace APISoftlandAnclaflex.Repositories
         {
             using (SqlConnection sql = new SqlConnection(Configuration.GetConnectionString("DefaultConnectionString")))
             {
-                using (SqlCommand cmd = new SqlCommand($"UPDATE {objeto} SET USR_TRANPW = '{transferido}' WHERE " +
+                using (SqlCommand cmd = new SqlCommand($"UPDATE anclaf.dbo.{objeto} SET USR_TRANPW = '{transferido}' WHERE " +
                                                        $"VTRMVC_CODEMP = '{comprobante.Empresa}' AND " +
                                                        $"VTRMVC_MODFOR = 'VT' AND " +
                                                        $"VTRMVC_CODFOR= '{comprobante.Codigoformulario}' AND " + 
