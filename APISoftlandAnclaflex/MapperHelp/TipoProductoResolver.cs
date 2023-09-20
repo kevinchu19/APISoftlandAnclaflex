@@ -15,4 +15,12 @@ namespace APISoftlandAnclaflex.MapperHelp
 			return source.IdProducto.Split("|")[0].Trim();
 		}
 	}
+
+	public class TipoProductoResolverPpto : IValueResolver<PresupuestoItemsDTO, Fcrmvi, string>
+	{
+		public string Resolve(PresupuestoItemsDTO source, Fcrmvi destination, string member, ResolutionContext context)
+		{
+			return source.IdProducto.Split("|")[0].Trim();
+		}
+	}
 }

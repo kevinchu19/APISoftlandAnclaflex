@@ -41,7 +41,7 @@ namespace APISoftlandAnclaflex.OE
             _logger = logger;
         }
 
-        public void InstancioObjeto(string tipoOperacion)
+        public void InstancioObjeto(string tipoOperacion, string circom, string cirapl, string codfor)
         {
             object[] objetoSoftland = new object[] {"FCRMVH",4, tipoOperacion};
             oWizard = OEType.InvokeMember("GetObject", BindingFlags.InvokeMethod | BindingFlags.Instance, null, oCompany, objetoSoftland);
@@ -51,13 +51,13 @@ namespace APISoftlandAnclaflex.OE
             oFieldsWizard = OEType.InvokeMember("Fields", BindingFlags.InvokeMethod, null, oTableWizard, null);
 
             oFieldWizard = OEType.InvokeMember("Item", BindingFlags.InvokeMethod, null, oFieldsWizard, new object[] { 1 });//VIRT_CIRCOM
-            OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oFieldWizard, new object[] { "0200" });
+            OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oFieldWizard, new object[] { circom });
 
             oFieldWizard = OEType.InvokeMember("Item", BindingFlags.InvokeMethod, null, oFieldsWizard, new object[] {2}); //VIRT_CIRAPL
-            OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oFieldWizard, new object[] { "0200" });
+            OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oFieldWizard, new object[] { cirapl });
 
             oFieldWizard = OEType.InvokeMember("Item", BindingFlags.InvokeMethod, null, oFieldsWizard, new object[] {6}); //VIRT_CODCFC
-            OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oFieldWizard, new object[] { "NPW" });
+            OEType.InvokeMember("Value", BindingFlags.SetProperty, null, oFieldWizard, new object[] { codfor });
 
             OEType.InvokeMember("MoveNext", BindingFlags.InvokeMethod, null, oWizard, null);
             oInstance = OEType.InvokeMember("NextObject", BindingFlags.GetProperty, null, oWizard, null);

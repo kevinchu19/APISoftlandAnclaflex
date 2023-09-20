@@ -11,32 +11,32 @@ using System.Threading.Tasks;
 
 namespace APISoftlandAnclaflex.Repositories
 {
-    public class PedidoRepository : RepositoryBase<string>
+    public class PresupuestoRepository : RepositoryBase<string>
     {
         public IOEObject oFCRMVH { get; set; }
         public Translate Translate { get; }
 
-        public PedidoRepository(ANCLAFContext context, Serilog.ILogger logger, IConfiguration configuration,Translate translate) :
+        public PresupuestoRepository(ANCLAFContext context, Serilog.ILogger logger, IConfiguration configuration,Translate translate) :
             base(context, configuration, logger)
         {
             Translate = translate;
         }
 
-        public PedidoResponse PostPedido(Fcrmvh _pedido, string _tipoOperacion, bool pagoEfectivo)
+        public PresupuestoResponse PostPresupuesto(Fcrmvh _presupuesto, string _tipoOperacion, bool pagoEfectivo)
         {
             string companyName = pagoEfectivo ? Configuration["CompanyNameEfectivo"] : Configuration["CompanyName"];
             
             FC_RR_FCRMVH oFCRMVH = new FC_RR_FCRMVH("admin", Configuration["PasswordAdmin"],companyName, Configuration, Logger);
 
-            oFCRMVH.InstancioObjeto(_tipoOperacion, "0200", "0200", "NPW");
+            oFCRMVH.InstancioObjeto(_tipoOperacion, "0100", "0100", "PRW");
 
-            Type typePedido = _pedido.GetType();
+            Type typePresupuesto = _presupuesto.GetType();
 
-            System.Reflection.PropertyInfo[] listaPropiedades = typePedido.GetProperties();
+            System.Reflection.PropertyInfo[] listaPropiedades = typePresupuesto.GetProperties();
                 
-            oFCRMVH.AsignoaTM<Fcrmvh>("FCRMVH", _pedido, 1);
+            oFCRMVH.AsignoaTM<Fcrmvh>("FCRMVH", _presupuesto, 1);
                 
-            foreach (Fcrmvi item in _pedido.Items)
+            foreach (Fcrmvi item in _presupuesto.Items)
             {
                 oFCRMVH.AsignoaTM<Fcrmvi>("FCRMVI", item, 2);
             }
@@ -51,10 +51,10 @@ namespace APISoftlandAnclaflex.Repositories
 
             if (result == false)
             {
-                return new PedidoResponse("Bad Request", mensajeError);
+                return new PresupuestoResponse("Bad Request", mensajeError);
             }
 
-            return new PedidoResponse("Pedido Generado Exitosamente");
+            return new PresupuestoResponse("Presupuesto Generado Exitosamente");
         }
     }
 }

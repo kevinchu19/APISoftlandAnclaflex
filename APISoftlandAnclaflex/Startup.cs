@@ -55,6 +55,7 @@ namespace APISoftlandAnclaflex
             });
 
             services.AddScoped<PedidoRepository>();
+            services.AddScoped<PresupuestoRepository>();
 
             services.AddScoped<BonificacionesRepository>();
             services.AddScoped<ClienteDireccionesDeEntregaRepository>();
@@ -124,7 +125,45 @@ namespace APISoftlandAnclaflex
                 .ForMember(dest => dest.Fcrmvi_Pctbf3, opt => opt.MapFrom(src => src.Bonificacion3))
                 .ForMember(dest => dest.Fcrmvi_Pctbf4, opt => opt.MapFrom(src => src.Bonificacion4))
                 .ReverseMap();
-        }
+
+                configuration.CreateMap<PresupuestoDTO, Fcrmvh>()
+                .ForMember(dest => dest.Virt_Nroffc, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Fcrmvh_Nrocta, opt => opt.MapFrom(src => src.IdCliente))
+                .ForMember(dest => dest.Fcrmvh_Cdent1, opt => opt.MapFrom(src => src.IdEntrega))
+                .ForMember(dest => dest.Fcrmvh_Dirent, opt => opt.MapFrom(src => src.DireccionEntrega))
+                .ForMember(dest => dest.Fcrmvh_Paient, opt => opt.MapFrom(src => src.PaisEntrega))
+                .ForMember(dest => dest.Fcrmvh_Codent, opt => opt.MapFrom(src => src.CodigoPostalEntrega))
+                .ForMember(dest => dest.Fcrmvh_Jurisd, opt => opt.MapFrom(src => src.ProvinciaEntrega))
+                .ForMember(dest => dest.Fcrmvh_Codlis, opt => opt.MapFrom(src => src.ListaPrecios))
+                .ForMember(dest => dest.Usr_Fcrmvh_Trared, opt => opt.MapFrom(src => src.TransportistaRedespacho))
+                .ForMember(dest => dest.Fcrmvh_Textos, opt => opt.MapFrom(src => src.Observacion))
+                .ForMember(dest => dest.Usr_Fcrmvh_Logist, opt => opt.MapFrom(src => src.ObservacionLogistica))
+                .ForMember(dest => dest.Fcrmvh_Vnddor, opt => opt.MapFrom(src => src.IdVendedor))
+                .ForMember(dest => dest.Fcrmvh_Telefn, opt => opt.MapFrom(src => src.Telefono))
+                .ForMember(dest => dest.Usr_Fcrmvh_Direml, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Fcrmvh_Fchmov, opt => opt.MapFrom(src => src.Fecha))
+                .ForMember(dest => dest.Usr_Fcrmvh_Retira, opt => opt.MapFrom(src => src.RetiradeFabrica == 1 ? "S" : "N"))
+                .ForMember(dest => dest.Usr_Fcrmvh_Acopio, opt => opt.MapFrom(src => src.Acopio == 1 ? "S" : "N"))
+                .ForMember(dest => dest.Usr_Fcrmvh_Dirmod, opt => opt.MapFrom(src => src.DireccionModificada == 1 ? "S" : "N"))
+                .ForMember(dest => dest.Fcrmvh_Fchdes, opt => opt.MapFrom(src => src.FechaDeEntrega))
+                .ForMember(dest => dest.Fcrmvh_Fchhas, opt => opt.MapFrom(src => src.FechaDeEntrega))
+                .ForMember(dest => dest.Usr_Fcrmvh_Userpw, opt => opt.MapFrom(src => src.IdUsuario))
+                //.ForMember(dest => dest.Usr_Fcrmvh_, opt => opt.MapFrom(src => src.EsBarrioCerrado))
+                //.ForMember(dest => dest.Fcrmvh_Nrofor, opt => opt.MapFrom(src => src.FechaDeEntrega))
+                //.ForMember(dest => dest.Fcrmvh_Nrofor, opt => opt.MapFrom(src => src.PagoEnEfectivo))
+                .ReverseMap();
+
+                configuration.CreateMap<PresupuestoItemsDTO, Fcrmvi>()
+                .ForMember(dest => dest.Fcrmvi_Tipori, opt => opt.MapFrom<TipoProductoResolverPpto>())
+                .ForMember(dest => dest.Fcrmvi_Artori, opt => opt.MapFrom<CodigoProductoResolverPpto>())
+                .ForMember(dest => dest.Fcrmvi_Cantid, opt => opt.MapFrom(src => src.Cantidad))
+                .ForMember(dest => dest.Fcrmvi_Precio, opt => opt.MapFrom(src => src.Precio))
+                .ForMember(dest => dest.Fcrmvi_Pctbf1, opt => opt.MapFrom(src => src.Bonificacion1))
+                .ForMember(dest => dest.Fcrmvi_Pctbf2, opt => opt.MapFrom(src => src.Bonificacion2))
+                .ForMember(dest => dest.Fcrmvi_Pctbf3, opt => opt.MapFrom(src => src.Bonificacion3))
+                .ForMember(dest => dest.Fcrmvi_Pctbf4, opt => opt.MapFrom(src => src.Bonificacion4))
+                .ReverseMap();
+            }
                 , typeof(Startup));
 
             services.AddSingleton<Serilog.ILogger>(options =>

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace APISoftlandAnclaflex.Helpers
 {
-    public class PedidoResponse : BaseResponse<PedidoDTO>
+    public class PresupuestoResponse : BaseResponse<PresupuestoDTO>
     {
 
-        public PedidoResponse(string titulo) : base(titulo) { }
-        public PedidoResponse(string titulo, PedidoDTO resource) : base(titulo, resource) { }
-        public PedidoResponse(string titulo, string message) : base(titulo, message) { }
+        public PresupuestoResponse(string titulo) : base(titulo) { }
+        public PresupuestoResponse(string titulo, PresupuestoDTO resource) : base(titulo, resource) { }
+        public PresupuestoResponse(string titulo, string message) : base(titulo, message) { }
 
 
     }

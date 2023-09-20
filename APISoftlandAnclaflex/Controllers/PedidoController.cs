@@ -15,14 +15,14 @@ namespace APISoftlandAnclaflex.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PedidoController : ControllerBase
+    public class PresupuestoController : ControllerBase
     {
-        public PedidoRepository _repository { get; }
+        public PresupuestoRepository _repository { get; }
         public IMapper _mapper { get; }
 
         private readonly Serilog.ILogger _logger;
 
-        public PedidoController(Serilog.ILogger logger, PedidoRepository repository, IMapper mapper)
+        public PresupuestoController(Serilog.ILogger logger, PresupuestoRepository repository, IMapper mapper)
         {
             _logger = logger;
             _repository = repository;
@@ -32,26 +32,26 @@ namespace APISoftlandAnclaflex.Controllers
         
 
         [HttpPost]
-        public ActionResult<IEnumerable<PedidoResponse>> PostPedido([FromBody] IEnumerable<PedidoDTO> pedidos)
+        public ActionResult<IEnumerable<PresupuestoResponse>> PostPresupuesto([FromBody] IEnumerable<PresupuestoDTO> presupuestos)
         {
-            List<PedidoResponse> response = new List<PedidoResponse>();
+            List<PresupuestoResponse> response = new List<PresupuestoResponse>();
 
-            _logger.Information($"Lote de pedidos recibidos:{ JsonSerializer.Serialize(pedidos,new JsonSerializerOptions { WriteIndented=true,})}");
+            _logger.Information($"Lote de pedidos recibidos:{ JsonSerializer.Serialize(presupuestos,new JsonSerializerOptions { WriteIndented=true,})}");
 
-            foreach (PedidoDTO pedido in pedidos)
+            foreach (PresupuestoDTO presupuesto in presupuestos)
             {
-                _logger.Information($"Procesando pedido {pedido.Id}");
+                _logger.Information($"Procesando presupuesto {presupuesto.Id}");
 
-                PedidoResponse result = _repository.PostPedido(_mapper.Map<PedidoDTO, Fcrmvh>(pedido), "RUN_FOR_SCRIPT", pedido.PagoEnEfectivo==1?true:false);
+                PresupuestoResponse result = _repository.PostPresupuesto(_mapper.Map<PresupuestoDTO, Fcrmvh>(presupuesto), "RUN_FOR_SCRIPT", presupuesto.PagoEnEfectivo==1?true:false);
                 if (result.Estado == 200)
                 {
-                    _logger.Information($"Pedido {pedido.Id} generado exitosamente");
-                    response.Add(new PedidoResponse(result.Titulo, pedido));
+                    _logger.Information($"Presupuesto {presupuesto.Id} generado exitosamente");
+                    response.Add(new PresupuestoResponse(result.Titulo, presupuesto));
                 }
                 else
                 {
-                    _logger.Error($"Pedido {pedido.Id} no generado por un error: {result.Mensaje}");
-                    response.Add(new PedidoResponse(result.Titulo, result.Mensaje));
+                    _logger.Error($"Presupuesto {presupuesto.Id} no generado por un error: {result.Mensaje}");
+                    response.Add(new PresupuestoResponse(result.Titulo, result.Mensaje));
                 }
                 
             }
